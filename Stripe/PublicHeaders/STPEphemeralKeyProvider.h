@@ -14,15 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class STPEphemeralKey;
 
-/**
- You should make your application's API client conform to this interface.
- It provides a way for Stripe utility classes to request a new ephemeral key from
- your backend, which it will use to retrieve and update Stripe API objects.
- */
-@protocol STPEphemeralKeyProvider <NSObject>
-
-@optional
-
+@protocol STPCustomerEphemeralKeyProvider <NSObject>
 /**
  Creates a new ephemeral key for retrieving and updating a Stripe customer.
  On your backend, you should create a new ephemeral key for the Stripe customer
@@ -40,17 +32,17 @@ NS_ASSUME_NONNULL_BEGIN
  @param completion  Call this callback when you're done fetching a new ephemeral
  key from your backend. For example, `completion(json, nil)` (if your call succeeds)
  or `completion(nil, error)` if an error is returned.
- @deprecated Implement `createKeyWithAPIVersion:scope:completion:` instead.
  */
-- (void)createCustomerKeyWithAPIVersion:(NSString *)apiVersion completion:(STPJSONResponseCompletionBlock)completion __attribute__((deprecated));
+- (void)createCustomerKeyWithAPIVersion:(NSString *)apiVersion completion:(STPJSONResponseCompletionBlock)completion;
+@end
 
-
+@protocol STPIssuingCardEphemeralKeyProvider <NSObject>
 /**
- Creates a new ephemeral key for retrieving and updating a Stripe API object.
- On your backend, you should assert that your user is authenticated and is associated
- with this object, and return the raw JSON response from the Stripe API.
+ Creates a new ephemeral key for retrieving and updating a Stripe Issuing Card.
+ On your backend, you should create a new ephemeral key for your logged-in user's
+ primary Issuing Card, and return the raw JSON response from the Stripe API.
  For an example Ruby implementation of this API, refer to our example backend:
- https://github.com/stripe/example-ios-backend/blob/v13.2.0/web.rb
+ https://github.com/stripe/example-ios-backend/blob/v14.0.0/web.rb
  
  Back in your iOS app, once you have a response from this API, call the provided
  completion block with the JSON response, or an error if one occurred.
@@ -63,10 +55,18 @@ NS_ASSUME_NONNULL_BEGIN
  key from your backend. For example, `completion(json, nil)` (if your call succeeds)
  or `completion(nil, error)` if an error is returned.
  */
-- (void)createKeyWithAPIVersion:(NSString *)apiVersion
-                          scope:(NSInteger)scope
-                     completion:(STPJSONResponseCompletionBlock)completion;
+- (void)createIssuingCardKeyWithAPIVersion:(NSString *)apiVersion completion:(STPJSONResponseCompletionBlock)completion;
+@end
 
+/**
+ You should make your application's API client conform to this interface.
+ It provides a way for Stripe utility classes to request a new ephemeral key from
+ your backend, which it will use to retrieve and update Stripe API objects.
+ @deprecated use `STPCustomerEphemeralKeyProvider` or `STPIssuingCardEphemeralKeyProvider`
+ instead depending on the type of key that will be fetched.
+ */
+__attribute__ ((deprecated))
+@protocol STPEphemeralKeyProvider <STPCustomerEphemeralKeyProvider>
 @end
 
 NS_ASSUME_NONNULL_END

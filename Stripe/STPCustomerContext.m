@@ -28,7 +28,7 @@ static NSTimeInterval const CachedCustomerMaxAge = 60;
 
 @implementation STPCustomerContext
 
-- (instancetype)initWithKeyProvider:(nonnull id<STPEphemeralKeyProvider>)keyProvider {
+- (instancetype)initWithKeyProvider:(nonnull id<STPCustomerEphemeralKeyProvider>)keyProvider {
     STPEphemeralKeyManager *keyManager = [[STPEphemeralKeyManager alloc] initWithKeyProvider:keyProvider
 
                                                                                   apiVersion:[STPAPIClient apiVersion] performsEagerFetching:YES];

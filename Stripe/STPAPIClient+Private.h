@@ -38,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface STPAPIClient (EphemeralKeys)
++ (instancetype)apiClientWithEphemeralKey:(STPEphemeralKey *)key;
+@end
+
 @interface STPAPIClient (Customers)
 
 /**

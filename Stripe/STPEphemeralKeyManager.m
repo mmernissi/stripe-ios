@@ -18,7 +18,7 @@ static NSTimeInterval const MinEagerRefreshInterval = 60*60;
 @interface STPEphemeralKeyManager ()
 @property (nonatomic) STPEphemeralKey *ephemeralKey;
 @property (nonatomic) NSString *apiVersion;
-@property (nonatomic, weak) id<STPEphemeralKeyProvider> keyProvider;
+@property (nonatomic, weak) id keyProvider;
 @property (nonatomic, readwrite, assign) BOOL performsEagerFetching;
 @property (nonatomic) NSDate *lastEagerKeyRefresh;
 @property (nonatomic) STPPromise<STPEphemeralKey *>*createKeyPromise;
@@ -26,11 +26,12 @@ static NSTimeInterval const MinEagerRefreshInterval = 60*60;
 
 @implementation STPEphemeralKeyManager
 
-- (instancetype)initWithKeyProvider:(id<STPEphemeralKeyProvider>)keyProvider
+- (instancetype)initWithKeyProvider:(id)keyProvider
                          apiVersion:(NSString *)apiVersion
               performsEagerFetching:(BOOL)performsEagerFetching {
     self = [super init];
     if (self) {
+        NSAssert([keyProvider conformsToProtocol:@protocol(STPCustomerEphemeralKeyProvider)] || [keyProvider conformsToProtocol:@protocol(STPIssuingCardEphemeralKeyProvider)], @"Your STPEphemeralKeyProvider must either implement `STPCustomerEphemeralKeyProvider` or `STPIssuingCardEphemeralKeyProvider`.");
         _expirationInterval = DefaultExpirationInterval;
         _keyProvider = keyProvider;
         _apiVersion = apiVersion;
@@ -91,17 +92,14 @@ static NSTimeInterval const MinEagerRefreshInterval = 60*60;
         }
         self.createKeyPromise = nil;
     };
-    if ([self.keyProvider respondsToSelector:@selector(createKeyWithAPIVersion:scope:completion:)]) {
-        [self.keyProvider createKeyWithAPIVersion:self.apiVersion scope:0 completion:jsonCompletion];
+    
+    if ([self.keyProvider conformsToProtocol:@protocol(STPCustomerEphemeralKeyProvider)]) {
+        id<STPCustomerEphemeralKeyProvider> provider = self.keyProvider;
+        [provider createCustomerKeyWithAPIVersion:self.apiVersion completion:jsonCompletion];
     }
-    else if ([self.keyProvider respondsToSelector:@selector(createCustomerKeyWithAPIVersion:completion:)]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
-        [self.keyProvider createCustomerKeyWithAPIVersion:self.apiVersion completion:jsonCompletion];
-#pragma clang diagnostic pop
-    }
-    else {
-        NSAssert(NO, @"Your STPEphemeralKeyProvider must either implement `createKeyWithAPIVersion:scope:completion` (recommended) or `createCustomerKeyWithAPIVersion:completion:` (deprecated).");
+    else if ([self.keyProvider conformsToProtocol:@protocol(STPIssuingCardEphemeralKeyProvider)]) {
+        id<STPIssuingCardEphemeralKeyProvider> provider = self.keyProvider;
+        [provider createIssuingCardKeyWithAPIVersion:self.apiVersion completion:jsonCompletion];
     }
 }
 

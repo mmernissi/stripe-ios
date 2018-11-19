@@ -7,13 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <PassKit/PassKit.h>
 #import "STPEphemeralKeyProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface STPPushProvisioningContext : NSObject
+typedef void (^STPPushProvisioningRequestConfigurationBlock)(PKAddPaymentPassRequestConfiguration * __nullable configuration, NSError * __nullable error);
 
-- (instancetype)initWithKeyProvider:(id<STPEphemeralKeyProvider>)keyProvider;
+@interface STPPushProvisioningContext : NSObject<PKAddPaymentPassViewControllerDelegate>
+
+- (instancetype)initWithKeyProvider:(id<STPIssuingCardEphemeralKeyProvider>)keyProvider;
+- (void)generateRequestConfiguration:(nullable STPPushProvisioningRequestConfigurationBlock)completion;
 
 @end
 

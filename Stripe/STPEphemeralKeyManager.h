@@ -35,7 +35,7 @@ typedef void (^STPEphemeralKeyCompletionBlock)(STPEphemeralKey * __nullable ephe
  @param performsEagerFetching     If the manager should eagerly refresh its key on app foregrounding.
  @return the newly-initiated `STPEphemeralKeyManager`.
  */
-- (instancetype)initWithKeyProvider:(id<STPEphemeralKeyProvider>)keyProvider
+- (instancetype)initWithKeyProvider:(id)keyProvider
                          apiVersion:(NSString *)apiVersion
               performsEagerFetching:(BOOL)performsEagerFetching;
 

@@ -9,15 +9,20 @@
 #import <Stripe/Stripe.h>
 #import "STPPushProvisioningDetails.h"
 #import "STPPushProvisioningDetailsParams.h"
+#import "STPIssuingCard.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^STPPushProvisioningDetailsCompletionBlock)(STPPushProvisioningDetails * __nullable details, NSError * __nullable error);
 
+typedef void (^STPIssuingCardCompletionBlock)(STPIssuingCard * __nullable card, NSError * __nullable error);
+
 @interface STPAPIClient (PushProvisioning)
     
 - (void)retrievePushProvisioningDetailsWithParams:(STPPushProvisioningDetailsParams *)params
                                     completion:(STPPushProvisioningDetailsCompletionBlock)completion;
+
+- (void)retrieveIssuingCardWithID:(NSString *)cardId completion:(STPIssuingCardCompletionBlock)completion;
 
 @end
 
