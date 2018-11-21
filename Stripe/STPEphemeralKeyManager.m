@@ -18,7 +18,7 @@ static NSTimeInterval const MinEagerRefreshInterval = 60*60;
 @interface STPEphemeralKeyManager ()
 @property (nonatomic) STPEphemeralKey *ephemeralKey;
 @property (nonatomic) NSString *apiVersion;
-@property (nonatomic, weak) id keyProvider;
+@property (nonatomic) id keyProvider;
 @property (nonatomic, readwrite, assign) BOOL performsEagerFetching;
 @property (nonatomic) NSDate *lastEagerKeyRefresh;
 @property (nonatomic) STPPromise<STPEphemeralKey *>*createKeyPromise;

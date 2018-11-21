@@ -79,10 +79,10 @@
     if (!object || ![object isKindOfClass:self.class]) {
         return NO;
     }
-    return [self isEqualToResourceKey:object];
+    return [self isEqualToEphemeralKey:object];
 }
 
-- (BOOL)isEqualToResourceKey:(STPEphemeralKey *)other {
+- (BOOL)isEqualToEphemeralKey:(STPEphemeralKey *)other {
     return [self.stripeID isEqualToString:other.stripeID];
 }
 
