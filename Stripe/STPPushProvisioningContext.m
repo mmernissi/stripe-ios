@@ -27,45 +27,24 @@
     return self;
 }
 
-- (void)generateRequestConfiguration:(nullable STPPushProvisioningRequestConfigurationBlock)completion {
-        
-        //        stpDispatchToMainThreadIfNecessary(^{
-        //            completion(self.customer, nil);
-        //        });
++ (PKAddPaymentPassRequestConfiguration *)requestConfigurationWithName:(NSString *)name
+                                                           description:(nullable NSString *)description
+                                                                 last4:(nullable NSString *)last4
+                                                                 brand:(STPCardBrand)brand {
+    PKAddPaymentPassRequestConfiguration *config = [[PKAddPaymentPassRequestConfiguration alloc] initWithEncryptionScheme:PKEncryptionSchemeECC_V2];
+    config.cardholderName = name;
+    config.primaryAccountSuffix = last4;
+    config.localizedDescription = description;
+    if (@available(iOS 12.0, *)) {
+        config.style = PKAddPaymentPassStylePayment;
+    }
+    if (brand == STPCardBrandVisa) {
+        config.paymentNetwork = PKPaymentNetworkVisa;
+    }
+    return config;
 }
 
-- (void)_generateRequestConfiguration:(STPPushProvisioningRequestConfigurationBlock)completion {
-    [self.keyManager getOrCreateKey:^(STPEphemeralKey * _Nullable ephemeralKey, NSError * _Nullable keyError) {
-        if (keyError != nil) {
-            completion(nil, keyError);
-            return;
-        }
-        
-        STPAPIClient *client = [STPAPIClient apiClientWithEphemeralKey:ephemeralKey];
-        [client retrieveIssuingCardWithID:ephemeralKey.issuingCardID completion:^(STPIssuingCard * _Nullable card, NSError * _Nullable cardError) {
-            if (cardError != nil) {
-                completion(nil, cardError);
-                return;
-            }
-            
-            if (![[PKPassLibrary new] canAddPaymentPassWithPrimaryAccountIdentifier:card.cardId]) {
-                NSError *error = nil; // TODO
-                completion(nil, error);
-            }
-            
-            PKAddPaymentPassRequestConfiguration *configuration = [[PKAddPaymentPassRequestConfiguration alloc] initWithEncryptionScheme:PKEncryptionSchemeECC_V2];
-            configuration.cardholderName = card.name;
-            configuration.primaryAccountSuffix = card.last4;
-            if (@available(iOS 12.0, *)) {
-                configuration.style = PKAddPaymentPassStylePayment;
-            }
-            configuration.paymentNetwork = [STPCard stringFromBrand:card.brand];
-            completion(configuration, nil);
-        }];
-    }];
-}
-
-- (void)addPaymentPassViewController:(nonnull PKAddPaymentPassViewController *)controller generateRequestWithCertificateChain:(nonnull NSArray<NSData *> *)certificates nonce:(nonnull NSData *)nonce nonceSignature:(nonnull NSData *)nonceSignature completionHandler:(nonnull void (^)(PKAddPaymentPassRequest * _Nonnull))handler {
+- (void)addPaymentPassViewController:(__unused PKAddPaymentPassViewController *)controller generateRequestWithCertificateChain:(NSArray<NSData *> *)certificates nonce:(NSData *)nonce nonceSignature:(NSData *)nonceSignature completionHandler:(void (^)(PKAddPaymentPassRequest *))handler {
     [self.keyManager getOrCreateKey:^(STPEphemeralKey * _Nullable ephemeralKey, NSError * _Nullable keyError) {
         if (keyError != nil) {
             handler([PKAddPaymentPassRequest new]);
@@ -86,10 +65,5 @@
         }];
     }];
 }
-
-- (void)addPaymentPassViewController:(nonnull PKAddPaymentPassViewController *)controller didFinishAddingPaymentPass:(nullable PKPaymentPass *)pass error:(nullable NSError *)error { 
-    <#code#>
-}
-
 
 @end

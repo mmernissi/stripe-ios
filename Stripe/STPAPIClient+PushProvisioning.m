@@ -41,17 +41,6 @@
                                                     }];
 }
 
-- (void)retrieveIssuingCardWithID:(NSString *)cardId completion:(STPIssuingCardCompletionBlock)completion {
-    NSString *endpoint = [NSString stringWithFormat:@"issuing/cards/%@", cardId];
-    [STPAPIRequest<STPIssuingCard *> getWithAPIClient:self
-                                             endpoint:endpoint
-                                           parameters:@{}
-                                         deserializer:[STPIssuingCard new]
-                                           completion:^(STPIssuingCard *card, __unused NSHTTPURLResponse *response, NSError *error) {
-                                                   completion(card, error);
-                                               }];
-}
-
 - (NSString *)hexadecimalStringForData:(NSData *)data {
     /* Returns hexadecimal string of NSData. Empty string if data is empty.   */
     

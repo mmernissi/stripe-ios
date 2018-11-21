@@ -83,11 +83,7 @@
 }
 
 - (BOOL)isEqualToResourceKey:(STPEphemeralKey *)other {
-    return [self.stripeID isEqualToString:other.stripeID] 
-        && [self.secret isEqualToString:other.secret]
-        && [self.expires isEqual:other.expires]
-        && [self.customerID isEqual:other.customerID]
-        && [self.issuingCardID isEqual:other.issuingCardID];
+    return [self.stripeID isEqualToString:other.stripeID];
 }
 
 @end
