@@ -63,9 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
  It provides a way for Stripe utility classes to request a new ephemeral key from
  your backend, which it will use to retrieve and update Stripe API objects.
  @deprecated use `STPCustomerEphemeralKeyProvider` or `STPIssuingCardEphemeralKeyProvider`
- instead depending on the type of key that will be fetched.
+depending on the type of key that will be fetched.
  */
-__attribute__ ((deprecated))
+__attribute__ ((deprecated("STPEphemeralKeyProvider has been renamed to STPCustomerEphemeralKeyProvider", "STPCustomerEphemeralKeyProvider")))
 @protocol STPEphemeralKeyProvider <STPCustomerEphemeralKeyProvider>
 @end
 
